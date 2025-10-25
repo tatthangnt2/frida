@@ -3,7 +3,7 @@
  Frida script (JavaScript) & shell helper:
 
 * Hook: network, crypto, file, biometric
-* Dump at runtime: HTTP requests, headers, SharedPreferences, Keychain, sqlite
+* Dump at runtime: HTTP requests, SharedPreferences, Keychain, sqlite
 * Bypass: SSL pinning, root/jailbreak detection, emulator checks
 * Reverse-engineering: stack trace, arguments, return values
 
@@ -31,7 +31,7 @@ frida -U -p <PID> -l scripts/sslpinning-android.js --no-pause
 ### frida-trace 
 
 ```bash
-# trace special function JNI / Java/Objective-C cụ thể
+# trace JNI / Java/Objective-C function
 frida-trace -U -i "*open*" com.example.app
 ```
 
