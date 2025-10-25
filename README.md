@@ -16,12 +16,12 @@
 ```bash
 # list process
 frida-ps -Uai
+# Spawn app & load script
+frida -U -f com.example.app -l scripts/sslpinning-android.js
 # Attach & load script
-frida -U -f com.example.app -l scripts/sslpinning-android.js --no-pause
+frida -U -n "AppName" -l scripts/sslpinning-android.js 
 # or
-frida -U -n "AppName" -l scripts/sslpinning-android.js --no-pause
-# or
-frida -U -p <PID> -l scripts/sslpinning-android.js --no-pause
+frida -U -p <PID> -l scripts/sslpinning-android.js 
 ```
 
 ### &#x20;
