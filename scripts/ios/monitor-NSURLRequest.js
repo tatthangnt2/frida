@@ -1,5 +1,7 @@
 console.log('NSURLRequest & NSURLSession monitor...');
 
+const MINIFY = true;
+
 if (!ObjC.available) {
     console.log("❌ Objective-C Runtime is not available!");
     throw new Error("ObjC runtime not available");
@@ -88,7 +90,7 @@ function buildCurl(url, method, headers, bodyRaw) {
 try {
     // --- Hook initWithURL: để log request URL ---
     const NSURLRequest = ObjC.classes.NSURLRequest;
-    if (NSURLRequest && NSURLRequest["- initWithURL:"]) {
+    if (!MINIFY && NSURLRequest && NSURLRequest["- initWithURL:"]) {
         Interceptor.attach(NSURLRequest["- initWithURL:"].implementation, {
             onEnter(args) {
                 const url = ObjC.Object(args[2]).toString();
@@ -110,13 +112,18 @@ try {
                 const method = request.HTTPMethod() ? request.HTTPMethod().toString() : "UNKNOWN";
                 const headers = request.allHTTPHeaderFields() ? toNSDictionary(request.allHTTPHeaderFields()) : {};
                 const bodyData = request.HTTPBody();
-                let body = bodyData ? ObjC.classes.NSString.alloc().initWithData_encoding_(bodyData, 4).toString() : "";
+                let body = bodyData ? ObjC.classes.NSString.alloc().initWithData_encoding_(bodyData, 4)?.toString() : "";
 
-                console.log(`🌐 ${method} ${url}`)
-                const out = buildCurl(url, method, headers, body);
-                if (out.curl) console.log(out.curl);
-                if (out.hint) console.log(out.hint);
-                console.log(JSON.stringify({ headers, body: parseJSON(body) }, null, 4))
+                if (MINIFY) {
+                    console.log(`🌐 ${method} ${url}`, JSON.stringify({ headers, body: parseJSON(body) }))
+                }
+                else {
+                    console.log(`🌐 ${method} ${url}`)
+                    const out = buildCurl(url, method, headers, body);
+                    if (out.curl) console.log(out.curl);
+                    if (out.hint) console.log(out.hint);
+                    console.log(JSON.stringify({ headers, body: parseJSON(body) }, null, 4))
+                }
             }
         });
     }
